@@ -1,0 +1,29 @@
+{
+    "flow-asserter-in": {
+        "label": {
+            "name": "Name",
+            "testcase": "Testcases",
+            "flowasserterout": "flow-asserter out node"
+        },
+        "errors": {
+            "not-deployed": "node not deployed",
+            "no-response": "no response from server",
+            "unexpected": "unexpected error (__status__) __message__",
+            "failed": "testcase running failed, see log for details"
+        },
+        "notification": {
+            "run": "Successfully testcase running: __label__",
+            "failed": "Testcase running failed: __error__",
+            "error": "<strong>Error</strong>: __message__"
+        },
+        "status": {
+            "running": "test running: __currentnum__/__testcasenum__",
+            "finished": "test finished: __failedcase__ failed"
+        }
+    },
+    "flow-asserter-out": {
+        "label": {
+            "name": "Name"
+        }
+    }
+}
