@@ -1,15 +1,21 @@
 module.exports = function(RED) {
-    'use strict';
+    'use strict';    
+    const equal = require('fast-deep-equal');
     
     function FlowAsserterInNode(n) {
         
         RED.nodes.createNode(this, n);
         var node = this;
+        const onlySelectOperators = ['null', 'nnull', 'empty', 'nempty'];
         node.testcases = [];
         for (let i in n.testcases) {
             let tc = n.testcases[i];
             tc.input = RED.util.evaluateNodeProperty(tc.input, tc.inputType);
             tc.assert = RED.util.evaluateNodeProperty(tc.assert, tc.assertType);
+            if (onlySelectOperators.includes(tc.operator)) {
+                tc.assert = undefined;
+                tc.assertType = undefined;
+            } 
             tc.flowAsserterIds = {'input': n.id, 'output': n.flowasserterout};
             node.testcases.push(tc);
         }
@@ -20,12 +26,51 @@ module.exports = function(RED) {
         var handler = function(msg) {
             let tc = msg._testcase;
             let result;
-            if (tc.operator == 'eq') {
-                result = (msg.payload == tc.assert);
-            } else if (tc.operator == 'lt') {
-                result = (msg.payload < tc.assert);
-            } else { // tc.operator == 'gt'
-                result = (msg.payload < tc.assert);
+            switch (tc.operator) {
+                case 'eq':
+                    result = (msg.payload == tc.assert);
+                    break;
+                case 'lt':
+                    result = (msg.payload < tc.assert);
+                    break;
+                case 'lte':
+                    result = (msg.payload <= tc.assert);
+                    break;
+                case 'gt':
+                    result = (msg.payload > tc.assert);
+                    break;
+                case 'gte':
+                    result = (msg.payload >= tc.assert);
+                    break;
+                case 'equal':
+                    result = equal(msg.payload, tc.assert);
+                    break;
+                case 'null':
+                    result = (typeof msg.payload == 'undefined' || msg.payload === null);
+                    break;
+                case 'nnull':
+                    result = (typeof msg.payload != 'undefined' && msg.payload !== null);
+                    break;
+                case 'empty':
+                    if (typeof msg.payload === 'string' || Array.isArray(msg.payload) || Buffer.isBuffer(msg.payload)) {
+                        result = (msg.payload.length === 0);
+                    } else if (typeof msg.payload === 'object' && msg.payload !== null) {
+                        result = (Object.keys(msg.payload).length === 0);
+                    } else {
+                        result = false;
+                    }
+                    break;
+                case 'nempty':
+                    if (typeof msg.payload === 'string' || Array.isArray(msg.payload) || Buffer.isBuffer(msg.payload)) {
+                        result = (msg.payload.length !== 0);
+                    } else if (typeof msg.payload === 'object' && msg.payload !== null) {
+                        result = (Object.keys(msg.payload).length !== 0);
+                    } else {
+                        result = false;
+                    }
+                    break;
+                default:
+                    RED._('flow-asserter-in.errors.invalid-operator', {operator: tc.operator});
             }
             tc.result = result ? 'Success': 'Failure';
             node.failedCase += result ? 0 : 1;

@@ -39,6 +39,13 @@
     </dl>
     <h3>Details</h3>
     <p>To write testcase, you should push add button, enter input form and output form and select operator. TestID is automatically numbered. Testcases are run in the order of TestID. Thus after one testcase finishes, next testcase is run.</p>
+    <h4>Notes</h4>
+    <p><code>equal</code> operator uses <a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a> for deep equality.</p>
+    <p><code>is null</code>, <code>is not null</code>, <code>is empty</code> and <code>is not empty</code> perform in the same way to switch node. Thus <code>is null</code> performs strict comparison against that type. It do not convert between types. <code>is empty</code> passes for Strings, Arrays and Buffers that have a length of 0, or Objects that have no properties. It does not pass for <code>null</code> or <code>undefined</code> values.</p>
+    <h3>References</h3>
+    <ul>
+        <li><a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a></li>
+    </ul>
 </script>
 
 <script type="text/x-red" data-help-name="flow-asserter out">
@@ -93,18 +100,10 @@
                 ).appendTo($(row));
                 $('input.testcase-input').typedInput({
                     default: 'str',
-                    types: ['str', 'num', 'bool'],
+                    types: ['str', 'num', 'bool', 'json', 'bin'],
                     typeField: '#testcase-inputType' + index
                 });
-                let columnAssert = $('<div>', {
-                    class: 'assert-column',
-                    css: {
-                        display: 'inline-grid',
-                        'min-width': '250px',
-                        'grid-template-rows': '1fr',
-                        'grid-template-columns': '85px 1fr'
-                     },
-                }).append($('<select>', {
+                let assertSelect = $('<select>', {
                         class: 'operator-select',
                         width: '80px',
                         css: {'grid-row': '1', 'grid-column': '1'}
@@ -113,16 +112,60 @@
                         text: '==',
                         selected: testcase['operator'] == 'eq',
                     })).append($('<option>', {
+                        value: 'neq',
+                        text: '!=',
+                        selected: testcase['operator'] == 'neq',
+                    })).append($('<option>', {
                         value: 'lt',
                         text: '<',
                         selected: testcase['operator'] == 'lt',
                     })).append($('<option>', {
+                        value: 'lte',
+                        text: '<=',
+                        selected: testcase['operator'] == 'lte',
+                    })).append($('<option>', {
                         value: 'gt',
                         text: '>',
                         selected: testcase['operator'] == 'gt',
-                    }))
+                    })).append($('<option>', {
+                        value: 'gte',
+                        text: '>=',
+                        selected: testcase['operator'] == 'gte',
+                    })).append($('<option>', {
+                        value: 'equal',
+                        text: 'equal',
+                        selected: testcase['operator'] == 'equal',
+                    })).append($('<option>', {
+                        value: 'null',
+                        text: 'is null',
+                        selected: testcase['operator'] == 'null',
+                    })).append($('<option>', {
+                        value: 'nnull',
+                        text: 'is not null',
+                        selected: testcase['operator'] == 'nnull',
+                    })).append($('<option>', {
+                        value: 'empty',
+                        text: 'is empty',
+                        selected: testcase['operator'] == 'empty',
+                    })).append($('<option>', {
+                        value: 'nempty',
+                        text: 'is not empty',
+                        selected: testcase['operator'] == 'nempty',
+                    })
+                );
+                let columnAssert = $('<div>', {
+                    class: 'assert-column',
+                    css: {
+                        display: 'inline-grid',
+                        'min-width': '250px',
+                        'grid-template-rows': '1fr',
+                        'grid-template-columns': '85px 1fr'
+                     },
+                }).append(
+                    assertSelect
                 ).append($('<input>', {
                         class: 'testcase-assert',
+                        id: 'testcase-assert' + index,
                         value: testcase['assert'],
                         css: {'grid-row': '1', 'grid-column': '2'}
                     })
@@ -135,9 +178,21 @@
                 ).appendTo($(row));
                 $('input.testcase-assert').typedInput({
                     default: 'str',
-                    types: ['str', 'num', 'bool'],
+                    types: ['str', 'num', 'bool', 'json', 'bin'],
                     typeField: '#testcase-assertType' + index
                 });
+                assertSelect.change(function () {
+                    const onlySelectOperators = ['null', 'nnull', 'empty', 'nempty'];
+                    let selectedOperator = $(this).val();
+                    if (onlySelectOperators.includes(selectedOperator)) {
+                        $('#testcase-assert' + index).typedInput('hide');
+                        $(this).width('120px');
+                    } else {
+                        $('#testcase-assert' + index).typedInput('show');
+                        $(this).width('66px');
+                    }
+                });
+                assertSelect.change();
             },
             header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 50px">TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
             removable: true,
