@@ -37,10 +37,10 @@ module.exports = function(RED) {
                     result = (msg.payload <= tc.assert);
                     break;
                 case 'gt':
-                    result = (msg.payload < tc.assert);
+                    result = (msg.payload > tc.assert);
                     break;
                 case 'gte':
-                    result = (msg.payload <= tc.assert);
+                    result = (msg.payload >= tc.assert);
                     break;
                 case 'equal':
                     result = equal(msg.payload, tc.assert);
