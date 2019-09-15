@@ -39,6 +39,13 @@
     </dl>
     <h3>Details</h3>
     <p>To write testcase, you should push add button, enter input form and output form and select operator. TestID is automatically numbered. Testcases are run in the order of TestID. Thus after one testcase finishes, next testcase is run.</p>
+    <h4>Notes</h4>
+    <p><code>equal</code> operator uses <a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a> for deep equality.</p>
+    <p><code>is null</code>, <code>is not null</code>, <code>is empty</code> and <code>is not empty</code> perform in the same way to switch node. Thus <code>is null</code> performs strict comparison against that type. It do not convert between types. <code>is empty</code> passes for Strings, Arrays and Buffers that have a length of 0, or Objects that have no properties. It does not pass for <code>null</code> or <code>undefined</code> values.</p>
+    <h3>References</h3>
+    <ul>
+        <li><a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a></li>
+    </ul>
 </script>
 
 <script type="text/x-red" data-help-name="flow-asserter out">
