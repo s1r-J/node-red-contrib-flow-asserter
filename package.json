@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-flow-asserter",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "This module helps to test your flow. Testcases are written in flow-asserter in node and flow-asserter out node is inserted into flow at the point wanted to assert msg.payload. Each testcase sends a message from the upper output port of flow-asserter in node. When the message reaches flow-asserter out node, msg.payload is compared with testcase's output and result of that comparison is sent from the lower output port of flow-asserter in node. If test is not run, flow-asserter out node simply hand over the message to next node.",
     "main": "node.js",
     "scripts": {
@@ -12,7 +12,9 @@
             "flow-asserter": "flow-asserter.js"
         }
     },
-    "dependencies": {},
+    "dependencies": {
+        "fast-deep-equal": "^2.0.1"
+    },
     "devDependencies": {
         "eslint": "^5.13.0",
         "eslint-plugin-node": "^8.0.1"
