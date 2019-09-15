@@ -93,7 +93,7 @@
                 ).appendTo($(row));
                 $('input.testcase-input').typedInput({
                     default: 'str',
-                    types: ['str', 'num', 'bool'],
+                    types: ['str', 'num', 'bool', 'json', 'bin'],
                     typeField: '#testcase-inputType' + index
                 });
                 let assertSelect = $('<select>', {
@@ -171,7 +171,7 @@
                 ).appendTo($(row));
                 $('input.testcase-assert').typedInput({
                     default: 'str',
-                    types: ['str', 'num', 'bool'],
+                    types: ['str', 'num', 'bool', 'json', 'bin'],
                     typeField: '#testcase-assertType' + index
                 });
                 assertSelect.change(function () {
