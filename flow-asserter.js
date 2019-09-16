@@ -30,6 +30,9 @@ module.exports = function(RED) {
                 case 'eq':
                     result = (msg.payload == tc.assert);
                     break;
+                case 'neq':
+                    result = (msg.payload != tc.assert);
+                    break;
                 case 'lt':
                     result = (msg.payload < tc.assert);
                     break;
@@ -70,7 +73,7 @@ module.exports = function(RED) {
                     }
                     break;
                 default:
-                    RED._('flow-asserter-in.errors.invalid-operator', {operator: tc.operator});
+                    node.error(RED._('flow-asserter-in.errors.invalid-operator', {operator: tc.operator}));
             }
             tc.result = result ? 'Success': 'Failure';
             node.failedCase += result ? 0 : 1;
