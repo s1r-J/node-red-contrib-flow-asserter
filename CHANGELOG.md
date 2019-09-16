@@ -1,6 +1,12 @@
 Changelog
 ==
 
+## [0.2.1](https://github.com/s1r-J/node-red-contrib-flow-asserter/tree/0.2.1) (2019/09/16)
+[Full Changelog](https://github.com/s1r-J/node-red-contrib-flow-asserter/compare/0.2.0...0.2.1)
+
+- Fix leakage of neq evaluating
+- Fix outputing error message if invalid operator
+
 ## [0.2.0](https://github.com/s1r-J/node-red-contrib-flow-asserter/tree/0.2.0) (2019/09/16)
 [Full Changelog](https://github.com/s1r-J/node-red-contrib-flow-asserter/compare/0.1.0...0.2.0)
 
