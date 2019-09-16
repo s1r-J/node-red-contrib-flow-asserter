@@ -30,6 +30,9 @@ module.exports = function(RED) {
                 case 'eq':
                     result = (msg.payload == tc.assert);
                     break;
+                case 'neq':
+                    result = (msg.payload != tc.assert);
+                    break;
                 case 'lt':
                     result = (msg.payload < tc.assert);
                     break;
