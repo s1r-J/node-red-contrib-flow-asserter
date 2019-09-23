@@ -68,13 +68,13 @@
             'min-height': '400px'
         }).editableList({
             addButton: true,
+            sortable: true,
             addItem: function(row, index, data) {
                 let testcase = data;
                 let columnTestId = $('<div>', {
                     width: '50px',
                     css: {
                         display: 'inline-grid',
-                        'text-align': 'center',
                         'font-weight': 'bolder',
                         'font-size': 'large',
                     },
@@ -157,7 +157,7 @@
                     class: 'assert-column',
                     css: {
                         display: 'inline-grid',
-                        'min-width': '250px',
+                        'min-width': '230px',
                         'grid-template-rows': '1fr',
                         'grid-template-columns': '85px 1fr'
                      },
@@ -187,14 +187,16 @@
                     if (onlySelectOperators.includes(selectedOperator)) {
                         $('#testcase-assert' + index).typedInput('hide');
                         $(this).width('120px');
+                        $(this).parent().css({'grid-template-columns': '140px 1fr'})
                     } else {
                         $('#testcase-assert' + index).typedInput('show');
                         $(this).width('66px');
+                        $(this).parent().css({'grid-template-columns': '85px 1fr'})
                     }
                 });
                 assertSelect.change();
             },
-            header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 50px">TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
+            header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 70px">&ensp; TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
             removable: true,
         });
     }
@@ -207,9 +209,10 @@
             let tcInputType = $(this).find('input.testcase-inputType').val();
             let tcOperator = $(this).find('.operator-select>option:selected').val();
             let tcAssert = $(this).find('input.testcase-assert').val();
-            let tcAssertType = $(this).find('input#testcase-assertType' + index).val();
+            let tcAssertType = $(this).find('input.testcase-assertType').val();
             let tc = {'testId': index, 'input': tcInput, 'inputType': tcInputType, 'operator': tcOperator, 'assert': tcAssert, 'assertType': tcAssertType};
             node.testcases.push(tc);
+
         });
     }
 
@@ -241,9 +244,9 @@
         $('.input-column').css({ width: inputFormWidth });
         let typedInputFormWidth = (140 + addWidth) + 'px';
         $('.input-column>.red-ui-typedInput-container').css({ width: typedInputFormWidth });
-        let assertColumnNameWidth = (250 + addWidth) + 'px';
+        let assertColumnNameWidth = (230 + addWidth) + 'px';
         $('#assert-column-name').css({ width: assertColumnNameWidth });
-        let assertFormWidth = (250 + addWidth) + 'px';
+        let assertFormWidth = (230 + addWidth) + 'px';
         $('.assert-column').css({ width: assertFormWidth });
         let typedAssertFormWidth = (130 + addWidth) + 'px';
         $('.assert-column>.red-ui-typedInput-container').css({ width: typedAssertFormWidth });
