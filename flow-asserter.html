@@ -153,6 +153,10 @@
                         text: 'is not empty',
                         selected: testcase['operator'] == 'nempty',
                     })).append($('<option>', {
+                        value: 'istype',
+                        text: 'is of type',
+                        selected: testcase['operator'] == 'istype',
+                    })).append($('<option>', {
                         value: 'jsonata',
                         text: 'JSONata exp',
                         selected: testcase['operator'] == 'jsonata',
@@ -188,7 +192,7 @@
                 });
                 assertSelect.change(function () {
                     const onlySelectOperators = ['null', 'nnull', 'empty', 'nempty'];
-                    let selectedOperator = $(this).val();
+                    const selectedOperator = $(this).val();
                     if (onlySelectOperators.includes(selectedOperator)) {
                         $('#testcase-assert' + index).typedInput('hide');
                         $(this).width('100px');
@@ -198,6 +202,13 @@
                             $('#testcase-assert' + index).typedInput('types', ['jsonata']);
                             $(this).width('90px');
                             $(this).parent().css({'grid-template-columns': '110px 1fr'});
+                        } else if (selectedOperator == 'istype') {
+                            $('#testcase-assert' + index).typedInput('types', [{
+                                value: 'type',
+                                options: ['string', 'number', 'boolean', 'array', 'buffer', 'object', 'JSON string', 'undefined', 'null']
+                            }]);
+                            $(this).width('90px');
+                            $(this).parent().css({'grid-template-columns': '110px 1fr'});        
                         } else {
                             $('#testcase-assert' + index).typedInput('types', ['str', 'num', 'bool', 'json', 'bin']);
                             $(this).width('66px');

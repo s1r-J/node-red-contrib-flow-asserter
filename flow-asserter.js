@@ -76,6 +76,24 @@ module.exports = function(RED) {
                         result = false;
                     }
                     break;
+                case 'istype':
+                    if (tc.assert === 'array') {
+                        result = Array.isArray(msg.payload);
+                    } else if (tc.assert === 'buffer') {
+                        result = Buffer.isBuffer(msg.payload);
+                    } else if (tc.assert === 'json') {
+                        try {
+                            JSON.parse(msg.payload);
+                            result = true;
+                        } catch(e) {
+                            result = false;
+                        }
+                    } else if (tc.assert === "null") {
+                        result = (msg.payload === null);
+                    } else {
+                        result = (typeof msg.payload === tc.assert && !Array.isArray(msg.payload) && !Buffer.isBuffer(msg.payload) && msg.payload !== null);
+                    }
+                    break;
                 case 'jsonata':
                     try {
                         result = (RED.util.evaluateJSONataExpression(tc.assert, msg) === true);
