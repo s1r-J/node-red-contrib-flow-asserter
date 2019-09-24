@@ -1,7 +1,7 @@
 node-red-contrib-flow-asserter
 ====
 
-Node-RED nodes to help testing your flow.
+Node-RED nodes to help testing your flow on editor UI. Testcases which need input and how to evaluate output are written in the editor dialog of the node. Writing testcases is easy because it is similar to setting inject node or switch node.
 
 ## Description
 
@@ -30,6 +30,10 @@ In this example, the flow consists of inject node, delay node, function node and
 ![debug-sidebar](./images/debugsidebar.png)
 
 ## Install
+
+```
+npm install node-red-contrib-flow-asserter
+```
 
 [![NPM](https://nodei.co/npm/node-red-contrib-flow-asserter.png)](https://nodei.co/npm/node-red-contrib-flow-asserter/)
 
