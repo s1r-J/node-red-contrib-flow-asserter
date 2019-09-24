@@ -27,7 +27,7 @@
     <h3>Outputs</h3>
     <h4>Upper output port</h4>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">string | number | boolean</span></dt>
+        <dt>payload <span class="property-type">string | number | boolean | json | bin</span></dt>
         <dd>Input of testcase is stored in this property.</dd>
         <dt class="optional">_testcase <span class="property-type">object</span></dt>
         <dd>Testcase information like input, output, way to compare and others is stored. Should not change this property in flow.</dd>
@@ -42,6 +42,7 @@
     <h4>Notes</h4>
     <p><code>equal</code> operator uses <a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a> for deep equality.</p>
     <p><code>is null</code>, <code>is not null</code>, <code>is empty</code> and <code>is not empty</code> perform in the same way to switch node. Thus <code>is null</code> performs strict comparison against that type. It do not convert between types. <code>is empty</code> passes for Strings, Arrays and Buffers that have a length of 0, or Objects that have no properties. It does not pass for <code>null</code> or <code>undefined</code> values.</p>
+    <p>A JSONata Expression operator can be provided that will be evaluated against the whole message and will match if the expression returns a true value.</p>
     <h3>References</h3>
     <ul>
         <li><a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a></li>
@@ -72,7 +73,7 @@
             addItem: function(row, index, data) {
                 let testcase = data;
                 let columnTestId = $('<div>', {
-                    width: '50px',
+                    width: '40px',
                     css: {
                         display: 'inline-grid',
                         'font-weight': 'bolder',
@@ -151,6 +152,10 @@
                         value: 'nempty',
                         text: 'is not empty',
                         selected: testcase['operator'] == 'nempty',
+                    })).append($('<option>', {
+                        value: 'jsonata',
+                        text: 'JSONata exp',
+                        selected: testcase['operator'] == 'jsonata',
                     })
                 );
                 let columnAssert = $('<div>', {
@@ -186,17 +191,24 @@
                     let selectedOperator = $(this).val();
                     if (onlySelectOperators.includes(selectedOperator)) {
                         $('#testcase-assert' + index).typedInput('hide');
-                        $(this).width('120px');
-                        $(this).parent().css({'grid-template-columns': '140px 1fr'})
+                        $(this).width('100px');
+                        $(this).parent().css({'grid-template-columns': '120px 1fr'});
                     } else {
+                        if (selectedOperator == 'jsonata') {
+                            $('#testcase-assert' + index).typedInput('types', ['jsonata']);
+                            $(this).width('90px');
+                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
+                        } else {
+                            $('#testcase-assert' + index).typedInput('types', ['str', 'num', 'bool', 'json', 'bin']);
+                            $(this).width('66px');
+                            $(this).parent().css({'grid-template-columns': '85px 1fr'});
+                        }
                         $('#testcase-assert' + index).typedInput('show');
-                        $(this).width('66px');
-                        $(this).parent().css({'grid-template-columns': '85px 1fr'})
                     }
                 });
                 assertSelect.change();
             },
-            header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 70px">&ensp; TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
+            header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 60px">&ensp; TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
             removable: true,
         });
     }

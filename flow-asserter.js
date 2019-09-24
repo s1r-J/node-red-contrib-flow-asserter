@@ -11,7 +11,11 @@ module.exports = function(RED) {
         for (let i in n.testcases) {
             let tc = n.testcases[i];
             tc.input = RED.util.evaluateNodeProperty(tc.input, tc.inputType);
-            tc.assert = RED.util.evaluateNodeProperty(tc.assert, tc.assertType);
+            if (tc.operator == 'jsonata') {
+                tc.assert = RED.util.prepareJSONataExpression(tc.assert, node);
+            } else {
+                tc.assert = RED.util.evaluateNodeProperty(tc.assert, tc.assertType);
+            }
             if (onlySelectOperators.includes(tc.operator)) {
                 tc.assert = undefined;
                 tc.assertType = undefined;
@@ -70,6 +74,14 @@ module.exports = function(RED) {
                         result = (Object.keys(msg.payload).length !== 0);
                     } else {
                         result = false;
+                    }
+                    break;
+                case 'jsonata':
+                    try {
+                        result = (RED.util.evaluateJSONataExpression(tc.assert, msg) === true);
+                    } catch (e) {
+                        result = false;
+                        node.error(RED._('flow-asserter-in.errors.invalid-jsonata', {error: e.message}));
                     }
                     break;
                 default:
