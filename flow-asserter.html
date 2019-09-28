@@ -27,7 +27,7 @@
     <h3>Outputs</h3>
     <h4>Upper output port</h4>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">string | number | boolean | json | bin</span></dt>
+        <dt>payload <span class="property-type">various</span></dt>
         <dd>Input of testcase is stored in this property.</dd>
         <dt class="optional">_testcase <span class="property-type">object</span></dt>
         <dd>Testcase information like input, output, way to compare and others is stored. Should not change this property in flow.</dd>
@@ -99,9 +99,15 @@
                         value: testcase['inputType'],
                     })
                 ).appendTo($(row));
+                const fixedValueType = {
+                    value: 'fixed',
+                    label: 'fixed value',
+                    icon: 'fixed',
+                    options: ['null', 'undefined']
+                }
                 $('input.testcase-input').typedInput({
                     default: 'str',
-                    types: ['str', 'num', 'bool', 'json', 'bin'],
+                    types: ['str', 'num', 'bool', 'json', 'bin', fixedValueType],
                     typeField: '#testcase-inputType' + index
                 });
                 let assertSelect = $('<select>', {

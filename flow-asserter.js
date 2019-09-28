@@ -10,7 +10,20 @@ module.exports = function(RED) {
         node.testcases = [];
         for (let i in n.testcases) {
             let tc = n.testcases[i];
-            tc.input = RED.util.evaluateNodeProperty(tc.input, tc.inputType);
+            if (tc.inputType == 'fixed') {
+                switch (tc.input) {
+                    case 'null':
+                        tc.input = null;
+                        break;
+                    case 'undefined':
+                        tc.input = undefined;
+                        break;
+                    default:
+                        node.error(RED._('flow-asserter-in.errors.invalid-input', {input: tc.input}));
+                }
+            } else {
+                tc.input = RED.util.evaluateNodeProperty(tc.input, tc.inputType);
+            }
             if (tc.operator == 'jsonata') {
                 tc.assert = RED.util.prepareJSONataExpression(tc.assert, node);
             } else {

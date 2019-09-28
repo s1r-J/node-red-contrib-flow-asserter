@@ -10,6 +10,7 @@
             "no-response": "no response from server",
             "unexpected": "unexpected error (__status__) __message__",
             "failed": "testcase running failed, see log for details",
+            "invalid-input": "invalid input (__input__)",
             "invalid-operator": "invalid operator (__operator__)",
             "invalid-jsonata": "Invalid JSONata expression: __error__"
         },
