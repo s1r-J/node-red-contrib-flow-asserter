@@ -65,6 +65,9 @@ module.exports = function(RED) {
                 case 'equal':
                     result = equal(msg.payload, tc.assert);
                     break;
+                case 'cont':
+                    result = ((msg.payload + '').indexOf(tc.assert) != -1);
+                    break;
                 case 'null':
                     result = (typeof msg.payload == 'undefined' || msg.payload === null);
                     break;

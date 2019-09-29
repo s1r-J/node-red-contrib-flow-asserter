@@ -143,6 +143,10 @@
                         text: 'equal',
                         selected: testcase['operator'] == 'equal',
                     })).append($('<option>', {
+                        value: 'cont',
+                        text: 'contains',
+                        selected: testcase['operator'] == 'cont',
+                    })).append($('<option>', {
                         value: 'null',
                         text: 'is null',
                         selected: testcase['operator'] == 'null',
