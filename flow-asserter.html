@@ -147,6 +147,10 @@
                         text: 'contains',
                         selected: testcase['operator'] == 'cont',
                     })).append($('<option>', {
+                        value: 'regex',
+                        text: 'matches regex',
+                        selected: testcase['operator'] == 'regex',
+                    })).append($('<option>', {
                         value: 'null',
                         text: 'is null',
                         selected: testcase['operator'] == 'null',
@@ -218,7 +222,11 @@
                                 options: ['string', 'number', 'boolean', 'array', 'buffer', 'object', 'JSON string', 'undefined', 'null']
                             }]);
                             $(this).width('90px');
-                            $(this).parent().css({'grid-template-columns': '110px 1fr'});        
+                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
+                        } else if (selectedOperator == 'regex') {
+                            $('#testcase-assert' + index).typedInput('types', ['re']);
+                            $(this).width('90px');
+                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
                         } else {
                             $('#testcase-assert' + index).typedInput('types', ['str', 'num', 'bool', 'json', 'bin']);
                             $(this).width('66px');

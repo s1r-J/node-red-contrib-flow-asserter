@@ -24,6 +24,7 @@ module.exports = function(RED) {
             } else {
                 tc.input = RED.util.evaluateNodeProperty(tc.input, tc.inputType);
             }
+            
             if (tc.operator == 'jsonata') {
                 tc.assert = RED.util.prepareJSONataExpression(tc.assert, node);
             } else {
@@ -67,6 +68,9 @@ module.exports = function(RED) {
                     break;
                 case 'cont':
                     result = ((msg.payload + '').indexOf(tc.assert) != -1);
+                    break;
+                case 'regex':
+                    result = tc.assert.test(msg.payload + '');
                     break;
                 case 'null':
                     result = (typeof msg.payload == 'undefined' || msg.payload === null);
