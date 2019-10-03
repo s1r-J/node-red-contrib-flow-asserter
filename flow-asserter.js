@@ -10,8 +10,26 @@ module.exports = function(RED) {
         node.testcases = [];
         for (let i in n.testcases) {
             let tc = n.testcases[i];
-            tc.input = RED.util.evaluateNodeProperty(tc.input, tc.inputType);
-            tc.assert = RED.util.evaluateNodeProperty(tc.assert, tc.assertType);
+            if (tc.inputType == 'fixed') {
+                switch (tc.input) {
+                    case 'null':
+                        tc.input = null;
+                        break;
+                    case 'undefined':
+                        tc.input = undefined;
+                        break;
+                    default:
+                        node.error(RED._('flow-asserter-in.errors.invalid-input', {input: tc.input}));
+                }
+            } else {
+                tc.input = RED.util.evaluateNodeProperty(tc.input, tc.inputType);
+            }
+            
+            if (tc.operator == 'jsonata') {
+                tc.assert = RED.util.prepareJSONataExpression(tc.assert, node);
+            } else {
+                tc.assert = RED.util.evaluateNodeProperty(tc.assert, tc.assertType);
+            }
             if (onlySelectOperators.includes(tc.operator)) {
                 tc.assert = undefined;
                 tc.assertType = undefined;
@@ -48,6 +66,12 @@ module.exports = function(RED) {
                 case 'equal':
                     result = equal(msg.payload, tc.assert);
                     break;
+                case 'cont':
+                    result = ((msg.payload + '').indexOf(tc.assert) != -1);
+                    break;
+                case 'regex':
+                    result = tc.assert.test(msg.payload + '');
+                    break;
                 case 'null':
                     result = (typeof msg.payload == 'undefined' || msg.payload === null);
                     break;
@@ -70,6 +94,32 @@ module.exports = function(RED) {
                         result = (Object.keys(msg.payload).length !== 0);
                     } else {
                         result = false;
+                    }
+                    break;
+                case 'istype':
+                    if (tc.assert === 'array') {
+                        result = Array.isArray(msg.payload);
+                    } else if (tc.assert === 'buffer') {
+                        result = Buffer.isBuffer(msg.payload);
+                    } else if (tc.assert === 'json') {
+                        try {
+                            JSON.parse(msg.payload);
+                            result = true;
+                        } catch(e) {
+                            result = false;
+                        }
+                    } else if (tc.assert === "null") {
+                        result = (msg.payload === null);
+                    } else {
+                        result = (typeof msg.payload === tc.assert && !Array.isArray(msg.payload) && !Buffer.isBuffer(msg.payload) && msg.payload !== null);
+                    }
+                    break;
+                case 'jsonata':
+                    try {
+                        result = (RED.util.evaluateJSONataExpression(tc.assert, msg) === true);
+                    } catch (e) {
+                        result = false;
+                        node.error(RED._('flow-asserter-in.errors.invalid-jsonata', {error: e.message}));
                     }
                     break;
                 default:

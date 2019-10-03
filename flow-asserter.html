@@ -27,7 +27,7 @@
     <h3>Outputs</h3>
     <h4>Upper output port</h4>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">string | number | boolean</span></dt>
+        <dt>payload <span class="property-type">various</span></dt>
         <dd>Input of testcase is stored in this property.</dd>
         <dt class="optional">_testcase <span class="property-type">object</span></dt>
         <dd>Testcase information like input, output, way to compare and others is stored. Should not change this property in flow.</dd>
@@ -42,6 +42,7 @@
     <h4>Notes</h4>
     <p><code>equal</code> operator uses <a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a> for deep equality.</p>
     <p><code>is null</code>, <code>is not null</code>, <code>is empty</code> and <code>is not empty</code> perform in the same way to switch node. Thus <code>is null</code> performs strict comparison against that type. It do not convert between types. <code>is empty</code> passes for Strings, Arrays and Buffers that have a length of 0, or Objects that have no properties. It does not pass for <code>null</code> or <code>undefined</code> values.</p>
+    <p>A JSONata Expression operator can be provided that will be evaluated against the whole message and will match if the expression returns a true value.</p>
     <h3>References</h3>
     <ul>
         <li><a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a></li>
@@ -68,13 +69,13 @@
             'min-height': '400px'
         }).editableList({
             addButton: true,
+            sortable: true,
             addItem: function(row, index, data) {
                 let testcase = data;
                 let columnTestId = $('<div>', {
-                    width: '50px',
+                    width: '40px',
                     css: {
                         display: 'inline-grid',
-                        'text-align': 'center',
                         'font-weight': 'bolder',
                         'font-size': 'large',
                     },
@@ -98,9 +99,15 @@
                         value: testcase['inputType'],
                     })
                 ).appendTo($(row));
+                const fixedValueType = {
+                    value: 'fixed',
+                    label: 'fixed value',
+                    icon: 'fixed',
+                    options: ['null', 'undefined']
+                }
                 $('input.testcase-input').typedInput({
                     default: 'str',
-                    types: ['str', 'num', 'bool', 'json', 'bin'],
+                    types: ['str', 'num', 'bool', 'json', 'bin', fixedValueType],
                     typeField: '#testcase-inputType' + index
                 });
                 let assertSelect = $('<select>', {
@@ -136,6 +143,14 @@
                         text: 'equal',
                         selected: testcase['operator'] == 'equal',
                     })).append($('<option>', {
+                        value: 'cont',
+                        text: 'contains',
+                        selected: testcase['operator'] == 'cont',
+                    })).append($('<option>', {
+                        value: 'regex',
+                        text: 'matches regex',
+                        selected: testcase['operator'] == 'regex',
+                    })).append($('<option>', {
                         value: 'null',
                         text: 'is null',
                         selected: testcase['operator'] == 'null',
@@ -151,13 +166,21 @@
                         value: 'nempty',
                         text: 'is not empty',
                         selected: testcase['operator'] == 'nempty',
+                    })).append($('<option>', {
+                        value: 'istype',
+                        text: 'is of type',
+                        selected: testcase['operator'] == 'istype',
+                    })).append($('<option>', {
+                        value: 'jsonata',
+                        text: 'JSONata exp',
+                        selected: testcase['operator'] == 'jsonata',
                     })
                 );
                 let columnAssert = $('<div>', {
                     class: 'assert-column',
                     css: {
                         display: 'inline-grid',
-                        'min-width': '250px',
+                        'min-width': '230px',
                         'grid-template-rows': '1fr',
                         'grid-template-columns': '85px 1fr'
                      },
@@ -183,18 +206,38 @@
                 });
                 assertSelect.change(function () {
                     const onlySelectOperators = ['null', 'nnull', 'empty', 'nempty'];
-                    let selectedOperator = $(this).val();
+                    const selectedOperator = $(this).val();
                     if (onlySelectOperators.includes(selectedOperator)) {
                         $('#testcase-assert' + index).typedInput('hide');
-                        $(this).width('120px');
+                        $(this).width('100px');
+                        $(this).parent().css({'grid-template-columns': '120px 1fr'});
                     } else {
+                        if (selectedOperator == 'jsonata') {
+                            $('#testcase-assert' + index).typedInput('types', ['jsonata']);
+                            $(this).width('90px');
+                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
+                        } else if (selectedOperator == 'istype') {
+                            $('#testcase-assert' + index).typedInput('types', [{
+                                value: 'type',
+                                options: ['string', 'number', 'boolean', 'array', 'buffer', 'object', 'JSON string', 'undefined', 'null']
+                            }]);
+                            $(this).width('90px');
+                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
+                        } else if (selectedOperator == 'regex') {
+                            $('#testcase-assert' + index).typedInput('types', ['re']);
+                            $(this).width('90px');
+                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
+                        } else {
+                            $('#testcase-assert' + index).typedInput('types', ['str', 'num', 'bool', 'json', 'bin']);
+                            $(this).width('66px');
+                            $(this).parent().css({'grid-template-columns': '85px 1fr'});
+                        }
                         $('#testcase-assert' + index).typedInput('show');
-                        $(this).width('66px');
                     }
                 });
                 assertSelect.change();
             },
-            header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 50px">TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
+            header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 60px">&ensp; TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
             removable: true,
         });
     }
@@ -207,9 +250,10 @@
             let tcInputType = $(this).find('input.testcase-inputType').val();
             let tcOperator = $(this).find('.operator-select>option:selected').val();
             let tcAssert = $(this).find('input.testcase-assert').val();
-            let tcAssertType = $(this).find('input#testcase-assertType' + index).val();
+            let tcAssertType = $(this).find('input.testcase-assertType').val();
             let tc = {'testId': index, 'input': tcInput, 'inputType': tcInputType, 'operator': tcOperator, 'assert': tcAssert, 'assertType': tcAssertType};
             node.testcases.push(tc);
+
         });
     }
 
@@ -241,9 +285,9 @@
         $('.input-column').css({ width: inputFormWidth });
         let typedInputFormWidth = (140 + addWidth) + 'px';
         $('.input-column>.red-ui-typedInput-container').css({ width: typedInputFormWidth });
-        let assertColumnNameWidth = (250 + addWidth) + 'px';
+        let assertColumnNameWidth = (230 + addWidth) + 'px';
         $('#assert-column-name').css({ width: assertColumnNameWidth });
-        let assertFormWidth = (250 + addWidth) + 'px';
+        let assertFormWidth = (230 + addWidth) + 'px';
         $('.assert-column').css({ width: assertFormWidth });
         let typedAssertFormWidth = (130 + addWidth) + 'px';
         $('.assert-column>.red-ui-typedInput-container').css({ width: typedAssertFormWidth });
