@@ -1,6 +1,18 @@
 Changelog
 ==
 
+## [0.3.0](https://github.com/s1r-J/node-red-contrib-flow-asserter/tree/0.3.0) (2019/10/03)
+[Full Changelog](https://github.com/s1r-J/node-red-contrib-flow-asserter/compare/0.2.1...0.3.0)
+
+- Update making testcase sortable
+- Add operators
+    - JSONata expression
+    - is of type
+    - contains
+    - matches regex
+- Add input type fixed value
+- Update package's description
+
 ## [0.2.1](https://github.com/s1r-J/node-red-contrib-flow-asserter/tree/0.2.1) (2019/09/16)
 [Full Changelog](https://github.com/s1r-J/node-red-contrib-flow-asserter/compare/0.2.0...0.2.1)
 

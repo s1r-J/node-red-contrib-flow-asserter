@@ -37,6 +37,10 @@ npm install node-red-contrib-flow-asserter
 
 [![NPM](https://nodei.co/npm/node-red-contrib-flow-asserter.png)](https://nodei.co/npm/node-red-contrib-flow-asserter/)
 
+## Changelog
+
+[Changelog](https://github.com/s1r-J/node-red-contrib-flow-asserter/blob/master/CHANGELOG.md)
+
 ## Licence
 
 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
