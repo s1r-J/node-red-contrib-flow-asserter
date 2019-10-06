@@ -207,33 +207,36 @@
                 assertSelect.change(function () {
                     const onlySelectOperators = ['null', 'nnull', 'empty', 'nempty'];
                     const selectedOperator = $(this).val();
+                    let widthStr;
+                    let gridTemplateColumnsStr;
+                    let typeInputStr = 'show';
                     if (onlySelectOperators.includes(selectedOperator)) {
-                        $('#testcase-assert' + index).typedInput('hide');
-                        $(this).width('100px');
-                        $(this).parent().css({'grid-template-columns': '120px 1fr'});
+                        widthStr = '100px';
+                        gridTemplateColumnsStr = '120px 1fr';
+                        typeInputStr = 'hide'
+                    } else if (selectedOperator == 'jsonata') {
+                        $('#testcase-assert' + index).typedInput('types', ['jsonata']);
+                        widthStr = '90px';
+                        gridTemplateColumnsStr = '110px 1fr';
+                    } else if (selectedOperator == 'istype') {
+                        $('#testcase-assert' + index).typedInput('types', [{
+                            value: 'type',
+                            options: ['string', 'number', 'boolean', 'array', 'buffer', 'object', 'JSON string', 'undefined', 'null']
+                        }]);
+                        widthStr = '90px';
+                        gridTemplateColumnsStr = '110px 1fr';
+                    } else if (selectedOperator == 'regex') {
+                        $('#testcase-assert' + index).typedInput('types', ['re']);
+                        widthStr = '90px';
+                        gridTemplateColumnsStr = '110px 1fr';
                     } else {
-                        if (selectedOperator == 'jsonata') {
-                            $('#testcase-assert' + index).typedInput('types', ['jsonata']);
-                            $(this).width('90px');
-                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
-                        } else if (selectedOperator == 'istype') {
-                            $('#testcase-assert' + index).typedInput('types', [{
-                                value: 'type',
-                                options: ['string', 'number', 'boolean', 'array', 'buffer', 'object', 'JSON string', 'undefined', 'null']
-                            }]);
-                            $(this).width('90px');
-                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
-                        } else if (selectedOperator == 'regex') {
-                            $('#testcase-assert' + index).typedInput('types', ['re']);
-                            $(this).width('90px');
-                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
-                        } else {
-                            $('#testcase-assert' + index).typedInput('types', ['str', 'num', 'bool', 'json', 'bin']);
-                            $(this).width('66px');
-                            $(this).parent().css({'grid-template-columns': '85px 1fr'});
-                        }
-                        $('#testcase-assert' + index).typedInput('show');
+                        $('#testcase-assert' + index).typedInput('types', ['str', 'num', 'bool', 'json', 'bin']);
+                        widthStr = '66px';
+                        gridTemplateColumnsStr = '85px 1fr';
                     }
+                    $(this).width(widthStr);
+                    $(this).parent().css({'grid-template-columns': gridTemplateColumnsStr});
+                    $('#testcase-assert' + index).typedInput(typeInputStr);
                 });
                 assertSelect.change();
             },
@@ -253,7 +256,6 @@
             let tcAssertType = $(this).find('input.testcase-assertType').val();
             let tc = {'testId': index, 'input': tcInput, 'inputType': tcInputType, 'operator': tcOperator, 'assert': tcAssert, 'assertType': tcAssertType};
             node.testcases.push(tc);
-
         });
     }
 
