@@ -3,7 +3,8 @@
         "label": {
             "name": "Name",
             "testcase": "Testcases",
-            "flowasserterout": "flow-asserter out node"
+            "flowasserterout": "flow-asserter out node",
+            "onlyfail": "Sends message only when test fails."
         },
         "errors": {
             "not-deployed": "node not deployed",

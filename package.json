@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-flow-asserter",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "This node module helps to test your flow on editor UI. Testcases which need input and how to evaluate output are written in the editor dialog of the node. Writing testcases is easy because it is similar to setting inject node or switch node.",
     "main": "node.js",
     "scripts": {
@@ -23,6 +23,7 @@
         "node-red",
         "flow",
         "test",
+        "testcase",
         "assertion"
     ],
     "author": "s1r-J",

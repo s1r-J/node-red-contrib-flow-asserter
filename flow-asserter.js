@@ -2,7 +2,7 @@ module.exports = function(RED) {
     'use strict';    
     const equal = require('fast-deep-equal');
     
-    var operatorFunctions = {
+    const operatorFunctions = {
         'eq': function (actual, expected) {
             return (actual == expected);
         },
@@ -83,10 +83,22 @@ module.exports = function(RED) {
         },
     };
     
+    const prepareResultMessage = function (node) {
+        if (node.testId == 0) {
+            return null;
+        }
+        if (node.onlyfail && node.testcases[node.testId - 1].result == 'Success') {
+            return null;
+        }        
+        return node.testId == 0 ? null: {'payload': node.testcases[node.testId - 1]};
+    };
+    
     function FlowAsserterInNode(n) {
         
         RED.nodes.createNode(this, n);
         var node = this;
+        node.onlyfail = n.onlyfail;
+        
         const onlySelectOperators = ['null', 'nnull', 'empty', 'nempty'];
         node.testcases = [];
         for (let i in n.testcases) {
@@ -144,7 +156,7 @@ module.exports = function(RED) {
                 shape: 'ring',
                 text: RED._('flow-asserter-in.status.running', {currentnum: (node.testId + 1), testcasenum: node.testcases.length})
             });
-            let resultMsg = node.testId == 0 ? null: {'payload': node.testcases[node.testId - 1]};
+            const resultMsg = prepareResultMessage(node);
             if (node.testId < node.testcases.length) { // testcase remains
                 msg._testcase = node.testcases[node.testId];
                 msg.payload = msg._testcase['input'];

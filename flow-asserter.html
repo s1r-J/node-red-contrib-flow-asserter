@@ -8,6 +8,11 @@
         <ol id="node-input-testcase"></ol>
     </div>
     <div class="form-row">
+        <label for="node-input-onlyfail" style="width: auto;">
+            <input type="checkbox" id="node-input-onlyfail" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="flow-asserter-in.label.onlyfail"></span>
+        </label>    
+    </div>
+    <div class="form-row">
         <label for="node-input-flowasserterout"><i class="fa fa-check-circle"></i> <span data-i18n="flow-asserter-in.label.flowasserterout"></label>
         <select id="node-input-flowasserterout">
             <option></option>
@@ -104,13 +109,13 @@
                     label: 'fixed value',
                     icon: 'fixed',
                     options: ['null', 'undefined']
-                }
+                };
                 $('input.testcase-input').typedInput({
                     default: 'str',
                     types: ['str', 'num', 'bool', 'json', 'bin', fixedValueType],
                     typeField: '#testcase-inputType' + index
                 });
-                let assertSelect = $('<select>', {
+                let selectElemAssert = $('<select>', {
                         class: 'operator-select',
                         width: '80px',
                         css: {'grid-row': '1', 'grid-column': '1'}
@@ -185,7 +190,7 @@
                         'grid-template-columns': '85px 1fr'
                      },
                 }).append(
-                    assertSelect
+                    selectElemAssert
                 ).append($('<input>', {
                         class: 'testcase-assert',
                         id: 'testcase-assert' + index,
@@ -204,7 +209,7 @@
                     types: ['str', 'num', 'bool', 'json', 'bin'],
                     typeField: '#testcase-assertType' + index
                 });
-                assertSelect.change(function () {
+                selectElemAssert.change(function () {
                     const onlySelectOperators = ['null', 'nnull', 'empty', 'nempty'];
                     const selectedOperator = $(this).val();
                     let widthStr;
@@ -238,7 +243,7 @@
                     $(this).parent().css({'grid-template-columns': gridTemplateColumnsStr});
                     $('#testcase-assert' + index).typedInput(typeInputStr);
                 });
-                assertSelect.change();
+                selectElemAssert.change();
             },
             header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 60px">&ensp; TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
             removable: true,
@@ -301,7 +306,8 @@
         defaults: {
             name: {value: ''},
             testcases: {value: []},
-            flowasserterout: {value: '', required: true}
+            onlyfail: {value: false},
+            flowasserterout: {value: '', required: true},
         },
         inputs: 0,
         outputs: 2,
@@ -325,7 +331,7 @@
             onclick: function() {
                 var label = this._def.label.call(this);
                 if (label.length > 30) {
-                    label = label.substring(0,50) + '...';
+                    label = label.substring(0, 50) + '...';
                 }
                 label = label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 var node = this;
