@@ -1,6 +1,15 @@
 Changelog
 ==
 
+## [0.4.0](https://github.com/s1r-J/node-red-contrib-flow-asserter/tree/0.4.0) (2019/11/17)
+[Full Changelog](https://github.com/s1r-J/node-red-contrib-flow-asserter/compare/0.3.0...0.4.0)
+
+- Clean code in html file
+- Update node's category from `input` and `output` to `test`
+- Clean code in html js
+- Add checkbox which controls sending test result message only when test fails
+- Update README
+
 ## [0.3.0](https://github.com/s1r-J/node-red-contrib-flow-asserter/tree/0.3.0) (2019/10/03)
 [Full Changelog](https://github.com/s1r-J/node-red-contrib-flow-asserter/compare/0.2.1...0.3.0)
 
