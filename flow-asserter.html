@@ -8,6 +8,11 @@
         <ol id="node-input-testcase"></ol>
     </div>
     <div class="form-row">
+        <label for="node-input-onlyfail" style="width: auto;">
+            <input type="checkbox" id="node-input-onlyfail" style="display:inline-block; width:22px; vertical-align:baseline;"><span data-i18n="flow-asserter-in.label.onlyfail"></span>
+        </label>    
+    </div>
+    <div class="form-row">
         <label for="node-input-flowasserterout"><i class="fa fa-check-circle"></i> <span data-i18n="flow-asserter-in.label.flowasserterout"></label>
         <select id="node-input-flowasserterout">
             <option></option>
@@ -104,13 +109,13 @@
                     label: 'fixed value',
                     icon: 'fixed',
                     options: ['null', 'undefined']
-                }
+                };
                 $('input.testcase-input').typedInput({
                     default: 'str',
                     types: ['str', 'num', 'bool', 'json', 'bin', fixedValueType],
                     typeField: '#testcase-inputType' + index
                 });
-                let assertSelect = $('<select>', {
+                let selectElemAssert = $('<select>', {
                         class: 'operator-select',
                         width: '80px',
                         css: {'grid-row': '1', 'grid-column': '1'}
@@ -185,7 +190,7 @@
                         'grid-template-columns': '85px 1fr'
                      },
                 }).append(
-                    assertSelect
+                    selectElemAssert
                 ).append($('<input>', {
                         class: 'testcase-assert',
                         id: 'testcase-assert' + index,
@@ -204,38 +209,41 @@
                     types: ['str', 'num', 'bool', 'json', 'bin'],
                     typeField: '#testcase-assertType' + index
                 });
-                assertSelect.change(function () {
+                selectElemAssert.change(function () {
                     const onlySelectOperators = ['null', 'nnull', 'empty', 'nempty'];
                     const selectedOperator = $(this).val();
+                    let widthStr;
+                    let gridTemplateColumnsStr;
+                    let typeInputStr = 'show';
                     if (onlySelectOperators.includes(selectedOperator)) {
-                        $('#testcase-assert' + index).typedInput('hide');
-                        $(this).width('100px');
-                        $(this).parent().css({'grid-template-columns': '120px 1fr'});
+                        widthStr = '100px';
+                        gridTemplateColumnsStr = '120px 1fr';
+                        typeInputStr = 'hide'
+                    } else if (selectedOperator == 'jsonata') {
+                        $('#testcase-assert' + index).typedInput('types', ['jsonata']);
+                        widthStr = '90px';
+                        gridTemplateColumnsStr = '110px 1fr';
+                    } else if (selectedOperator == 'istype') {
+                        $('#testcase-assert' + index).typedInput('types', [{
+                            value: 'type',
+                            options: ['string', 'number', 'boolean', 'array', 'buffer', 'object', 'JSON string', 'undefined', 'null']
+                        }]);
+                        widthStr = '90px';
+                        gridTemplateColumnsStr = '110px 1fr';
+                    } else if (selectedOperator == 'regex') {
+                        $('#testcase-assert' + index).typedInput('types', ['re']);
+                        widthStr = '90px';
+                        gridTemplateColumnsStr = '110px 1fr';
                     } else {
-                        if (selectedOperator == 'jsonata') {
-                            $('#testcase-assert' + index).typedInput('types', ['jsonata']);
-                            $(this).width('90px');
-                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
-                        } else if (selectedOperator == 'istype') {
-                            $('#testcase-assert' + index).typedInput('types', [{
-                                value: 'type',
-                                options: ['string', 'number', 'boolean', 'array', 'buffer', 'object', 'JSON string', 'undefined', 'null']
-                            }]);
-                            $(this).width('90px');
-                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
-                        } else if (selectedOperator == 'regex') {
-                            $('#testcase-assert' + index).typedInput('types', ['re']);
-                            $(this).width('90px');
-                            $(this).parent().css({'grid-template-columns': '110px 1fr'});
-                        } else {
-                            $('#testcase-assert' + index).typedInput('types', ['str', 'num', 'bool', 'json', 'bin']);
-                            $(this).width('66px');
-                            $(this).parent().css({'grid-template-columns': '85px 1fr'});
-                        }
-                        $('#testcase-assert' + index).typedInput('show');
+                        $('#testcase-assert' + index).typedInput('types', ['str', 'num', 'bool', 'json', 'bin']);
+                        widthStr = '66px';
+                        gridTemplateColumnsStr = '85px 1fr';
                     }
+                    $(this).width(widthStr);
+                    $(this).parent().css({'grid-template-columns': gridTemplateColumnsStr});
+                    $('#testcase-assert' + index).typedInput(typeInputStr);
                 });
-                assertSelect.change();
+                selectElemAssert.change();
             },
             header: $('<div>').append($.parseHTML('<div style="display: inline-grid; width: 60px">&ensp; TestID</div><div id="input-column-name" style="display: inline-grid; min-width: 150px">Input</div><div id="assert-column-name" style="display: inline-grid;">Assert</div>')),
             removable: true,
@@ -253,7 +261,6 @@
             let tcAssertType = $(this).find('input.testcase-assertType').val();
             let tc = {'testId': index, 'input': tcInput, 'inputType': tcInputType, 'operator': tcOperator, 'assert': tcAssert, 'assertType': tcAssertType};
             node.testcases.push(tc);
-
         });
     }
 
@@ -294,12 +301,13 @@
     }
     
     RED.nodes.registerType('flow-asserter in',{
-        category: 'input',
+        category: 'test',
         color: '#65b754',
         defaults: {
             name: {value: ''},
             testcases: {value: []},
-            flowasserterout: {value: '', required: true}
+            onlyfail: {value: false},
+            flowasserterout: {value: '', required: true},
         },
         inputs: 0,
         outputs: 2,
@@ -323,7 +331,7 @@
             onclick: function() {
                 var label = this._def.label.call(this);
                 if (label.length > 30) {
-                    label = label.substring(0,50) + '...';
+                    label = label.substring(0, 50) + '...';
                 }
                 label = label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 var node = this;
@@ -353,7 +361,7 @@
     });
 
     RED.nodes.registerType('flow-asserter out',{
-        category: 'output',
+        category: 'test',
         color: '#65b754',
         defaults: {
             name: {value: ''},
