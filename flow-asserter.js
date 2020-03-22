@@ -204,6 +204,7 @@ module.exports = function(RED) {
         this.on('input', function(msg) {
             if (msg._testcase !== undefined && msg._testcase.flowAsserterIds.output == node.id) {
                 let event = 'node:' + msg._testcase.flowAsserterIds.input;
+                msg._testcase.resultData = msg.payload;
                 RED.events.emit(event, msg);
             } else {
                 this.send(msg);
