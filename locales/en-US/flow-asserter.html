@@ -1,0 +1,39 @@
+<script type="text/x-red" data-help-name="flow-asserter in">
+    <p>This module helps to test your flow. Testcases are written in flow-asserter in node and flow-asserter out node is inserted into flow at the point wanted to assert <code>msg.payload</code>. By clicking the button, test will start. Each testcase stores its input in <code>msg.payload</code> and sends a message from the upper output port. When the message reaches flow-asserter out node specified by flow-asserter in node, <code>msg.payload</code> is compared with testcase's output by the rule defined in testcase and result of that comparison is sent from the lower output port.</p>
+    <h3>Outputs</h3>
+    <h4>Upper output port</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">various</span></dt>
+        <dd>Input of testcase is stored in this property.</dd>
+        <dt class="optional">_testcase <span class="property-type">object</span></dt>
+        <dd>Testcase information like input, output, way to compare and others is stored. Should not change this property in flow.</dd>
+    </dl>
+    <h4>Lower output port(<code>test result</code>)</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Testcase result is stored in this property.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p>To write testcase, you should push add button, enter input form and output form and select operator. TestID is automatically numbered. Testcases are run in the order of TestID. Thus after one testcase finishes, next testcase is run.</p>
+    <h4>Notes</h4>
+    <p><code>equal</code> operator uses <a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a> for deep equality.</p>
+    <p><code>is null</code>, <code>is not null</code>, <code>is empty</code> and <code>is not empty</code> perform in the same way to switch node. Thus <code>is null</code> performs strict comparison against that type. It do not convert between types. <code>is empty</code> passes for Strings, Arrays and Buffers that have a length of 0, or Objects that have no properties. It does not pass for <code>null</code> or <code>undefined</code> values.</p>
+    <p>A JSONata Expression operator can be provided that will be evaluated against the whole message and will match if the expression returns a true value.</p>
+    <h3>References</h3>
+    <ul>
+        <li><a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a></li>
+    </ul>
+</script>
+
+<script type="text/x-red" data-help-name="flow-asserter out">
+    <p>This module helps to test your flow. Testcases are written in flow-asserter in node and flow-asserter out node is inserted into flow at the point wanted to assert <code>msg.payload</code>. By clicking the button, test will start. Each testcase stores its input in <code>msg.payload</code> and sends a message from the upper output port. When the message reaches flow-asserter out node specified by flow-asserter in node, <code>msg.payload</code> is compared with testcase's output by the rule defined in testcase and result of that comparison is sent from the lower output port.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt class="optional">payload <span class="property-type">various</span></dt>
+        <dd>If testcase specify this node, this property is compared with output of testcase.</dd>
+        <dt class="optional">_testcase <span class="property-type">object</span></dt>
+        <dd>Testcase information is stored. It is used for determining which node asserts output, how to compare and others. Should not change this property in flow.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p>If testcase reaching this flow-asserter out node specifies this node, this node asserts <code>msg.payload</code> and does not send message from output port. However when test is not being run or testcase specifies other node, this node simply hand over the message to next node wired to output port of this node.</p>
+</script>

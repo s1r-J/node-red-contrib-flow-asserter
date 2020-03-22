@@ -1,0 +1,33 @@
+{
+    "flow-asserter-in": {
+        "label": {
+            "name": "名前",
+            "testcase": "テストケース",
+            "flowasserterout": "flow-asserter outノード",
+            "onlyfail": "テスト失敗時のみメッセージを送信する"
+        },
+        "errors": {
+            "not-deployed": "ノードがデプロイされていません",
+            "no-response": "サーバの応答がありません",
+            "unexpected": "想定外のエラー (__status__) __message__",
+            "failed": "テストケース実行が失敗しました、詳細はログを確認してください。",
+            "invalid-input": "入力が不正: (__input__)",
+            "invalid-operator": "演算子が不正: (__operator__)",
+            "invalid-jsonata": "JSONata式が不正: __error__"
+        },
+        "notification": {
+            "run": "テストケース実行に成功: __label__",
+            "failed": "テストケース実行に失敗: __error__",
+            "error": "<strong>エラー</strong>: __message__"
+        },
+        "status": {
+            "running": "テスト実行中: __currentnum__/__testcasenum__",
+            "finished": "テスト終了: __failedcase__ 件失敗"
+        }
+    },
+    "flow-asserter-out": {
+        "label": {
+            "name": "名前"
+        }
+    }
+}

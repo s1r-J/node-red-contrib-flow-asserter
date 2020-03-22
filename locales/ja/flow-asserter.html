@@ -1,0 +1,39 @@
+<script type="text/x-red" data-help-name="flow-asserter in">
+    <p>このモジュールはフローをテストすることを助けます。flow-asserter inノードにテストケースを記述し、flow-asserter outノードをフロー中の<code>msg.payload</code>をアサートしたい位置に追加します。ボタンをクリックすることでテストが実行されます。それぞれのテストケースでは入力値が<code>msg.payload</code>に代入され、上側の出力ポートからメッセージが出力されます。メッセージがflow-asserter inノードで指定されたflow-asserter outノードに到達すると、<code>msg.payload</code>はテストケースの出力とテストケースで定義された方法で比較され、比較結果は下側の出力ポートから出力されます。</p>
+    <h3>出力</h3>
+    <h4>上側出力ポート</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">various</span></dt>
+        <dd>このプロパティには、テストケースの入力が代入されます。</dd>
+        <dt class="optional">_testcase <span class="property-type">object</span></dt>
+        <dd>入力値、期待される出力値、比較方法などテストケース情報が保存されています。フロー中でこのプロパティを変更してはいけません。</dd>
+    </dl>
+    <h4>下側出力ポート(<code>test result</code>)</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>このプロパティには、テストケース結果が保存されます。</dd>
+    </dl>
+    <h3>詳細</h3>
+    <p>テストケースを記述するには。追加ボタンを押し、入力値と出力値を設定し、演算子を選択します。テストIDは自動採番されます。テストケースはテストID順に実行されます。1つのテストケースが終了したら、次のテストケースが実行されます。</p>
+    <h4>注釈</h4>
+    <p><code>equal</code>演算子は同値比較のために<a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a>を利用しています。</p>
+    <p><code>is null</code>、<code>is not null</code>、<code>is empty</code>そして<code>is not empty</code>はswitchノードと同じ挙動を示します。つまり<code>is null</code>は型に対して厳格な比較をおこないます。型変換はおこないません。<code>is empty</code>は長さが0の文字列、配列、バッファもしくはプロパティを持たないオブジェクトを真と判定します。<code>null</code>および<code>undefined</code>は偽と判定します。</p>
+    <p>JSONata式はメッセージ全体に対して評価をおこない、式がtrue値を返却するときに一致したとみなします。</p>
+    <h3>参照</h3>
+    <ul>
+        <li><a href="https://github.com/epoberezkin/fast-deep-equal">fast-deep-equal</a></li>
+    </ul>
+</script>
+
+<script type="text/x-red" data-help-name="flow-asserter out">
+    <p>このモジュールはフローをテストすることを助けます。flow-asserter inノードにテストケースを記述し、flow-asserter outノードをフロー中の<code>msg.payload</code>をアサートしたい位置に追加します。ボタンをクリックすることでテストが実行されます。それぞれのテストケースでは入力値が<code>msg.payload</code>に代入され、上側の出力ポートからメッセージが出力されます。メッセージがflow-asserter inノードで指定されたflow-asserter outノードに到達すると、<code>msg.payload</code>はテストケースの出力とテストケースで定義された方法で比較され、比較結果は下側の出力ポートから出力されます。</p>
+    <h3>入力</h3>
+    <dl class="message-properties">
+        <dt class="optional">payload <span class="property-type">various</span></dt>
+        <dd>このノードがテストケースで指定されているとき、このプロパティがテストケースの出力と比較されます。</dd>
+        <dt class="optional">_testcase <span class="property-type">object</span></dt>
+        <dd>入力値、期待される出力値、比較方法などテストケース情報が保存されています。フロー中でこのプロパティを変更してはいけません。</dd>
+    </dl>
+    <h3>出力</h3>
+    <p>到達したテストケースがflow-asserter outノードとしてこのノードを指定している場合、このノードは<code>msg.payload</code>を比較し、出力ポートからメッセージを創出しません。しかし、テストが実行されていない、もしくはテストケースが他のノードを指定していたとき、このノードは出力ポートに繋がっている次のノードにメッセージを単に渡すだけです。</p>
+</script>
